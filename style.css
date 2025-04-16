@@ -1,16 +1,16 @@
 body {
     display: inline-flex;
-    background-color: black;
+    background-color: gray;
 
     color: white;
 
     position: fixed;
-    margin: 0px;
+    margin: 10px;
 }
 
-/* canvas {
-    /* border: 1px solid white; */
-/* } */
+canvas {
+    border: 3px solid gray;
+}
 
 .info {
     position:absolute;
