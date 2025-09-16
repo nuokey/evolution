@@ -15,7 +15,7 @@ class Particle {
         this.type = "particle";
         this.force = 0;
         this.health = health;
-        this.toxicity = toxicity;
+        this.toxicity = false;
         this.birthTime = birthTime;
         // console.log(toxicity);
     }
@@ -177,15 +177,15 @@ class Bacteria {
                     dividehealth += 2 * getRandomArbitrary(0, 1);
                 }
                 let forceP = getRandomArbitrary(-100, 100);
-                let deathPeriodP = getRandomArbitrary(-300, 300);
+                let deathPeriodP = getRandomArbitrary(-10, 10);
                 deathPeriod += deathPeriodP;
                 force += forceP;
-                mutationChance += getRandomArbitrary(-0.005, 0.005);
+                mutationChance += getRandomArbitrary(-0.0001, 0.0001);
                 if (mutationChance <= 0) {
-                    mutationChance = 0.001
+                    mutationChance = 0.0001
                 }
                 if (mutationChance >= 1) {
-                    mutationChance = 0.999
+                    mutationChance = 0.9999
                 }
                 color = getRandomColor();
             }
@@ -385,26 +385,26 @@ const bacteriasListHTML = document.getElementById("bacterias-list");
 // canvas.width = window.innerWidth;
 // canvas.height = window.innerHeight;
 
-canvas.width = 500;
-canvas.height = 500;
+canvas.width = 300;
+canvas.height = 300;
 
 let scale = 1;
-let borderX = 500;
-let borderY = 500;
+let borderX = 300;
+let borderY = 300;
 
 let objects = [];
 const greenColor = "#6CF46C";
 const redColor = "#F17865";
 const blueColor = "#6CE1F4";
 
-let n = 1000
+let n = 700;
 for (let i = 0; i < n; i++) {
     objects.push(new Particle(getRandomArbitrary(10, borderX-10)*scale, getRandomArbitrary(10, borderY-10)*scale, 100));
 }
 for (let i = 0; i < 1; i++) {
-    objects.push(new Bacteria(getRandomArbitrary(100, 200)*scale, getRandomArbitrary(100, 200)*scale, health=0, dividehealth=100, birthTime=0, deathPeriod=500, force=100, color=redColor, mutationChance=0.005));
+    objects.push(new Bacteria(getRandomArbitrary(100, 200)*scale, getRandomArbitrary(100, 200)*scale, health=0, dividehealth=100, birthTime=0, deathPeriod=200, force=100, color=redColor, mutationChance=0.005));
 }
-objects.push(new Amoeba(getRandomArbitrary(400, 500)*scale, getRandomArbitrary(100, 200)*scale, health=0, dividehealth=1000, birthTime=0, deathPeriod=5000, force=1000, color=blueColor, mutationChance=0.001))
+// objects.push(new Amoeba(getRandomArbitrary(400, 500)*scale, getRandomArbitrary(100, 200)*scale, health=0, dividehealth=1000, birthTime=0, deathPeriod=5000, force=1000, color=blueColor, mutationChance=0.001))
 
 // objects.push(new Bacteria(200, 200, 1, 2, 0, 10000, 10));
 // objects.push(new Bacteria(210, 200, 2, 5, 0, 10000, 5));
@@ -413,7 +413,7 @@ let animationId;
 let pastTime;
 let maxFps = 120;
 let time = 0;
-let dt = 1
+let dt = 1;
 let greatMutationChance = 0.0001;
 
 
@@ -448,15 +448,22 @@ function draw() {
 }
 
 function objectsUpdate() {
+    bacteriasList = [];
+    bacteriasColorList = [];
     objects.forEach(e => {
         e.update(objects, time);
-        // if (e.type == "bacteria") {
-        //     if (bacteriasColorList.indexOf(e.color) == -1) {
-        //         bacteriasList.push([e.color, e.mutationChance, e.dividehealth])
-        //         bacteriasColorList.push(e.color);
-        //     }
-        // }
+        if (e.type == "bacteria") {
+            let colorIndex = bacteriasColorList.indexOf(e.color)
+            if (colorIndex == -1) {
+                bacteriasList.push([1, e.color, e.mutationChance, e.dividehealth, e.force])
+                bacteriasColorList.push(e.color);
+            }
+            else {
+                bacteriasList[colorIndex][0] += 1;
+            }
+        }
     });
+    // bacteriasList = bacteriasList.sort().reverse();
     // bacteriasList.forEach(b => {
     //     bacteriasListHTML.innerHTML = bacteriasList;
     // })
@@ -487,6 +494,12 @@ document.addEventListener('keydown', function (event) {
     if (event.key == "b") {
         console.log(bacteriasList);
         console.log(bacteriasColorList);
+    }
+    if (event.key == "w") {
+        dt *= 2;
+    }
+    if (event.key == "q") {
+        dt /= 2;
     }
 
     // console.log(event);
